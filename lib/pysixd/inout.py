@@ -54,7 +54,7 @@ def load_depth(path):
     :return: ndarray with the loaded depth image.
     """
     d = imageio.imread(path)
-    return d.astype(np.float32)
+    return d.astype(float)
 
 
 def save_depth(path, im):
@@ -184,14 +184,14 @@ def load_emb_pkl_single(emb_path, cls_idx=None, width=640, height=480):
     emb = None
     tmp = mmcv.load(emb_path)
     if isinstance(tmp, dict):
-        emb = np.zeros((height, width, 3), dtype=np.float32)
+        emb = np.zeros((height, width, 3), dtype=float)
         x1, y1, x2, y2 = tmp["bbox"]
         emb[y1 : y2 + 1, x1 : x2 + 1, :] = tmp["emb"]
     elif isinstance(tmp, list) and cls_idx is not None:
         """assume single instance of cls_idx."""
         for e in tmp:
             if e is not None and e["cls_idx"] == cls_idx:
-                emb = np.zeros((height, width, 3), dtype=np.float32)
+                emb = np.zeros((height, width, 3), dtype=float)
                 x1, y1, x2, y2 = e["bbox"]
                 emb[y1 : y2 + 1, x1 : x2 + 1, :] = e["emb"]
     return emb
@@ -231,11 +231,11 @@ def load_scene_camera(path):
 
     for im_id in scene_camera.keys():
         if "cam_K" in scene_camera[im_id].keys():
-            scene_camera[im_id]["cam_K"] = np.array(scene_camera[im_id]["cam_K"], np.float).reshape((3, 3))
+            scene_camera[im_id]["cam_K"] = np.array(scene_camera[im_id]["cam_K"], float).reshape((3, 3))
         if "cam_R_w2c" in scene_camera[im_id].keys():
-            scene_camera[im_id]["cam_R_w2c"] = np.array(scene_camera[im_id]["cam_R_w2c"], np.float).reshape((3, 3))
+            scene_camera[im_id]["cam_R_w2c"] = np.array(scene_camera[im_id]["cam_R_w2c"], float).reshape((3, 3))
         if "cam_t_w2c" in scene_camera[im_id].keys():
-            scene_camera[im_id]["cam_t_w2c"] = np.array(scene_camera[im_id]["cam_t_w2c"], np.float).reshape((3, 1))
+            scene_camera[im_id]["cam_t_w2c"] = np.array(scene_camera[im_id]["cam_t_w2c"], float).reshape((3, 1))
     return scene_camera
 
 
@@ -271,9 +271,9 @@ def load_scene_gt(path):
     for im_id, im_gt in scene_gt.items():
         for gt in im_gt:
             if "cam_R_m2c" in gt.keys():
-                gt["cam_R_m2c"] = np.array(gt["cam_R_m2c"], np.float).reshape((3, 3))
+                gt["cam_R_m2c"] = np.array(gt["cam_R_m2c"], float).reshape((3, 3))
             if "cam_t_m2c" in gt.keys():
-                gt["cam_t_m2c"] = np.array(gt["cam_t_m2c"], np.float).reshape((3, 1))
+                gt["cam_t_m2c"] = np.array(gt["cam_t_m2c"], float).reshape((3, 1))
     return scene_gt
 
 
@@ -325,8 +325,8 @@ def load_bop_results(path, version="bop19"):
                         "im_id": int(elems[1]),
                         "obj_id": int(elems[2]),
                         "score": float(elems[3]),
-                        "R": np.array(list(map(float, elems[4].split())), np.float).reshape((3, 3)),
-                        "t": np.array(list(map(float, elems[5].split())), np.float).reshape((3, 1)),
+                        "R": np.array(list(map(float, elems[4].split())), float).reshape((3, 3)),
+                        "t": np.array(list(map(float, elems[5].split())), float).reshape((3, 1)),
                         "time": float(elems[6]),
                     }
 
@@ -430,7 +430,7 @@ def ply_vtx(path, vertex_scale=1.0):
             continue
         pts = []
         for _ in range(N):
-            pts.append(np.float32(f.readline().split()[:3]))
+            pts.append(float(f.readline().split()[:3]))
     return np.array(pts) * vertex_scale
 
 
@@ -454,7 +454,7 @@ def ply_vtx_expand(path, vertex_scale=1.0):
             break
     pts = []
     for _ in range(N):
-        pts.append(np.float32(f.readline().split()[:3]))
+        pts.append(float(f.readline().split()[:3]))
     ptsExpand = []
     for _ in range(F):
         line = f.readline()
@@ -574,9 +574,9 @@ def load_ply(path, vertex_scale=1.0):
     model = {}
     if texture_file is not None:
         model["texture_file"] = texture_file
-    model["pts"] = np.zeros((n_pts, 3), np.float)
+    model["pts"] = np.zeros((n_pts, 3), float)
     if n_faces > 0:
-        model["faces"] = np.zeros((n_faces, face_n_corners), np.float)
+        model["faces"] = np.zeros((n_faces, face_n_corners), float)
 
     # print(pt_props)
     pt_props_names = [p[0] for p in pt_props]
@@ -586,22 +586,22 @@ def load_ply(path, vertex_scale=1.0):
     is_normal = False
     if {"nx", "ny", "nz"}.issubset(set(pt_props_names)):
         is_normal = True
-        model["normals"] = np.zeros((n_pts, 3), np.float)
+        model["normals"] = np.zeros((n_pts, 3), float)
 
     is_color = False
     if {"red", "green", "blue"}.issubset(set(pt_props_names)):
         is_color = True
-        model["colors"] = np.zeros((n_pts, 3), np.float)
+        model["colors"] = np.zeros((n_pts, 3), float)
 
     is_texture_pt = False
     if {"texture_u", "texture_v"}.issubset(set(pt_props_names)):
         is_texture_pt = True
-        model["texture_uv"] = np.zeros((n_pts, 2), np.float)
+        model["texture_uv"] = np.zeros((n_pts, 2), float)
 
     is_texture_face = False
     if {"texcoord"}.issubset(set(face_props_names)):
         is_texture_face = True
-        model["texture_uv_face"] = np.zeros((n_faces, 6), np.float)
+        model["texture_uv_face"] = np.zeros((n_faces, 6), float)
 
     # Formats for the binary case.
     formats = {
@@ -913,7 +913,7 @@ def obj_vtx(filename):
         if code == "v":
             V.append([float(x) for x in values])
     # Building the vertices
-    V = np.array(V, dtype=np.float32)
+    V = np.array(V, dtype=float)
     return V
 
 
