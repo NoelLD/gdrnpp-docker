@@ -1,92 +1,117 @@
-# GDRNPP-Docker
+# GDRNPP for BOP2022
 
+This repo provides code and models for GDRNPP_BOP2022, **winner (most of the awards) of the BOP Challenge 2022 at ECCV'22 [[slides](http://cmp.felk.cvut.cz/sixd/workshop_2022/slides/bop_challenge_2022_results.pdf)]**.
 
+## Path Setting
 
-## Getting started
+### Dataset Preparation
+Download the 6D pose datasets from the
+[BOP website](https://bop.felk.cvut.cz/datasets/) and
+[VOC 2012](https://pjreddie.com/projects/pascal-voc-dataset-mirror/)
+for background images.
+Please also download the  `test_bboxes` from
+here [OneDrive](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/liuxy21_mails_tsinghua_edu_cn/Eq_2aCC0RfhNisW8ZezYtIoBGfJiRIZnFxbITuQrJ56DjA?e=hPbJz2) (password: groupji) or [BaiDuYunPan](https://pan.baidu.com/s/1FzTO4Emfu-DxYkNG40EDKw)(password: vp58).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+The structure of `datasets` folder should look like below:
 ```
-cd existing_repo
-git remote add origin https://gitlab.rz.htw-berlin.de/s0569470/gdrnpp-docker.git
-git branch -M main
-git push -uf origin main
+datasets/
+├── BOP_DATASETS   # https://bop.felk.cvut.cz/datasets/
+    ├──tudl
+    ├──lmo
+    ├──ycbv
+    ├──icbin
+    ├──hb
+    ├──itodd
+    └──tless
+└──VOCdevkit
 ```
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.rz.htw-berlin.de/s0569470/gdrnpp-docker/-/settings/integrations)
+### Models
 
-## Collaborate with your team
+Download the trained models at [Onedrive](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/liuxy21_mails_tsinghua_edu_cn/EgOQzGZn9A5DlaQhgpTtHBwB2Bwyx8qmvLauiHFcJbnGSw?e=EZ60La) (password: groupji) or [BaiDuYunPan](https://pan.baidu.com/s/1LhXblEic6pYf1i6hOm6Otw)(password: 10t3) and put them in the folder `./output`.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
+## Requirements
+* Ubuntu 18.04/20.04, CUDA 10.1/10.2/11.6, python >= 3.7, PyTorch >= 1.9, torchvision
+* Install `detectron2` from [source](https://github.com/facebookresearch/detectron2)
+* `sh scripts/install_deps.sh`
+* Compile the cpp extension for `farthest points sampling (fps)`:
+    ```
+    sh core/csrc/compile.sh
+    ```
 
-Use the built-in continuous integration in GitLab.
+## Detection
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+We adopt yolox as the detection method. We used stronger data augmentation and ranger optimizer.
 
-***
+### Training 
 
-# Editing this README
+Download the pretrained model at [Onedrive](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/liuxy21_mails_tsinghua_edu_cn/EkCTrRfHUZVEtD7eHwLkYSkBCTXlh9ekDteSzK6jM4oo-A?e=m0aNCy) (password: groupji) or [BaiDuYunPan](https://pan.baidu.com/s/1AU7DGCmZWsH9VgQnbTRjow)(password: aw68) and put it in the folder `pretrained_models/yolox`. Then use the following command:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+`./det/yolox/tools/train_yolox.sh <config_path> <gpu_ids> (other args)`
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Testing 
 
-## Name
-Choose a self-explaining name for your project.
+`./det/yolox/tools/test_yolox.sh <config_path> <gpu_ids> <ckpt_path> (other args)`
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Pose Estimation
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+The difference between this repo and GDR-Net (CVPR2021) mainly including:
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+* Domain Randomization: We used stronger domain randomization operations than the conference version during training.
+* Network Architecture: We used a more powerful backbone Convnext rather than resnet-34,  and two  mask heads for predicting amodal mask and visible mask separately.
+* Other training details, such as learning rate, weight decay, visible threshold, and bounding box type.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Training 
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+`./core/gdrn_modeling/train_gdrn.sh <config_path> <gpu_ids> (other args)`
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+For example:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+`./core/gdrn_modeling/train_gdrn.sh configs/gdrn/ycbv/convnext_a6_AugCosyAAEGray_BG05_mlL1_DMask_amodalClipBox_classAware_ycbv.py 0`
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Testing 
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+`./core/gdrn_modeling/test_gdrn.sh <config_path> <gpu_ids> <ckpt_path> (other args)`
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+For example:
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+`./core/gdrn_modeling/test_gdrn.sh configs/gdrn/ycbv/convnext_a6_AugCosyAAEGray_BG05_mlL1_DMask_amodalClipBox_classAware_ycbv.py 0 output/gdrn/ycbv/convnext_a6_AugCosyAAEGray_BG05_mlL1_DMask_amodalClipBox_classAware_ycbv/model_final_wo_optim.pth`
 
-## License
-For open source projects, say how it is licensed.
+## Pose Refinement
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+We utilize depth information to further refine the estimated pose.
+We provide two types of refinement: fast refinement and iterative refinement.
+
+For fast refinement, we compare the rendered object depth and the observed depth to refine translation.
+Run
+
+`./core/gdrn_modeling/test_gdrn_depth_refine.sh <config_path> <gpu_ids> <ckpt_path> (other args)`
+
+For iterative refinement, please checkout to the [pose_refine branch](https://github.com/shanice-l/gdrnpp_bop2022/tree/pose_refine) for details.
+
+## Citing GDRNPP
+
+If you use GDRNPP in your research, please use the following BibTeX entries.
+
+```BibTeX
+@misc{liu2022gdrnpp_bop,
+  author =       {Xingyu Liu and Ruida Zhang and Chenyangguang Zhang and 
+                  Bowen Fu and Jiwen Tang and Xiquan Liang and Jingyi Tang and 
+                  Xiaotian Cheng and Yukang Zhang and Gu Wang and Xiangyang Ji},
+  title =        {GDRNPP},
+  howpublished = {\url{https://github.com/shanice-l/gdrnpp_bop2022}},
+  year =         {2022}
+}
+
+@InProceedings{Wang_2021_GDRN,
+    title     = {{GDR-Net}: Geometry-Guided Direct Regression Network for Monocular 6D Object Pose Estimation},
+    author    = {Wang, Gu and Manhardt, Fabian and Tombari, Federico and Ji, Xiangyang},
+    booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2021},
+    pages     = {16611-16621}
+}
+```
+
