@@ -1,7 +1,37 @@
-# GDRNPP for BOP2022
+# GDRNPP for Docker
 
-This repo provides code and models for GDRNPP_BOP2022, **winner (most of the awards) of the BOP Challenge 2022 at ECCV'22 [[slides](http://cmp.felk.cvut.cz/sixd/workshop_2022/slides/bop_challenge_2022_results.pdf)]**.
+This repo uses the Code from the BOP 2022 Winner **GDRNPP**:
+[gdrnpp github](https://github.com/shanice-l/gdrnpp_bop2022)
 
+git repo for running 
+
+## Docker
+### build docker container
+```
+cd docker
+docker build --rm -t VERSION_NAME .
+```
+for example:
+```
+docker build --rm -t dodrimong:gdrnpp .
+```
+
+### run docker container
+```
+docker run --gpus all -it -v 'PATH/TO/OUTPUT/:/home/appuser/gdrnpp_bop2022/output/gdrn/' -v 'PATH/TO/DATASETS/:/home/appuser/gdrnpp_bop2022/datasets/BOP_DATASETS/' VERSION_NAME bash
+```
+for example
+```
+docker run --gpus all -it -v '/mnt/d/Studium/Master angewandte Informatik/4. Semester/Forschungsprojekt Teil B/Umsetzung/GDR-Net/GDRNPP/output/:/home/appuser/gdrnpp_bop2022/output/gdrn/' -v '/mnt/d/Studium/Master angewandte Informatik/4. Semester/ICW 1/Datensätze/BOP Datasets/:/home/appuser/gdrnpp_bop2022/datasets/BOP_DATASETS/' dodrimong:gdrnpp bash
+```
+
+## running commands
+for pose estimation
+```
+./core/gdrn_modeling/test_gdrn.sh configs/gdrn/lmo_pbr/convnext_a6_AugCosyAAEGray_BG05_mlL1_DMask_amodalClipBox_classAware_lmo.py 0 output/gdrn/lmo_pbr/convnext_a6_AugCosyAAEGray_BG05_mlL1_DMask_amodalClipBox_classAware_lmo/model_final_wo_optim.pth
+```
+
+# OLD README
 ## Path Setting
 
 ### Dataset Preparation
@@ -91,27 +121,4 @@ Run
 
 For iterative refinement, please checkout to the [pose_refine branch](https://github.com/shanice-l/gdrnpp_bop2022/tree/pose_refine) for details.
 
-## Citing GDRNPP
-
-If you use GDRNPP in your research, please use the following BibTeX entries.
-
-```BibTeX
-@misc{liu2022gdrnpp_bop,
-  author =       {Xingyu Liu and Ruida Zhang and Chenyangguang Zhang and 
-                  Bowen Fu and Jiwen Tang and Xiquan Liang and Jingyi Tang and 
-                  Xiaotian Cheng and Yukang Zhang and Gu Wang and Xiangyang Ji},
-  title =        {GDRNPP},
-  howpublished = {\url{https://github.com/shanice-l/gdrnpp_bop2022}},
-  year =         {2022}
-}
-
-@InProceedings{Wang_2021_GDRN,
-    title     = {{GDR-Net}: Geometry-Guided Direct Regression Network for Monocular 6D Object Pose Estimation},
-    author    = {Wang, Gu and Manhardt, Fabian and Tombari, Federico and Ji, Xiangyang},
-    booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-    month     = {June},
-    year      = {2021},
-    pages     = {16611-16621}
-}
-```
 
