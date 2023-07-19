@@ -42,19 +42,19 @@ ENV FVCORE_CACHE="/tmp"
 RUN sudo apt install nano
 
 RUN git clone https://github.com/NoelLD/gdrnpp-docker.git
-WORKDIR /home/appuser/gdrnpp_bop2022
+WORKDIR /home/appuser/gdrnpp-docker
 
 RUN git clone https://github.com/thodan/bop_renderer.git
 
 RUN sudo apt install libosmesa6-dev -y
 
-WORKDIR /home/appuser/gdrnpp_bop2022/bop_renderer
+WORKDIR /home/appuser/gdrnpp-docker/bop_renderer
 RUN mkdir build
 
 RUN cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 RUN cmake --build build
 
-WORKDIR /home/appuser/gdrnpp_bop2022
+WORKDIR /home/appuser/gdrnpp-docker
 
 RUN sh scripts/install_deps.sh
 
