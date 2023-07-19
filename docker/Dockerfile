@@ -41,10 +41,9 @@ ENV FVCORE_CACHE="/tmp"
 
 RUN sudo apt install nano
 
-RUN git clone https://github.com/shanice-l/gdrnpp_bop2022.git
+RUN git clone https://github.com/NoelLD/gdrnpp-docker.git
 WORKDIR /home/appuser/gdrnpp_bop2022
 
-RUN rm bop_renderer
 RUN git clone https://github.com/thodan/bop_renderer.git
 
 RUN sudo apt install libosmesa6-dev -y
