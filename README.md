@@ -11,18 +11,10 @@ git repo for running
 cd docker
 docker build --rm -t VERSION_NAME .
 ```
-for example:
-```
-docker build --rm -t dodrimong:gdrnpp .
-```
 
 ### run docker container
 ```
 docker run --gpus all -it -v 'PATH/TO/OUTPUT/:/home/appuser/gdrnpp_bop2022/output/gdrn/' -v 'PATH/TO/DATASETS/:/home/appuser/gdrnpp_bop2022/datasets/BOP_DATASETS/' VERSION_NAME bash
-```
-for example
-```
-docker run --gpus all -it -v '/mnt/d/Studium/Master angewandte Informatik/4. Semester/Forschungsprojekt Teil B/Umsetzung/GDR-Net/GDRNPP/output/:/home/appuser/gdrnpp_bop2022/output/gdrn/' -v '/mnt/d/Studium/Master angewandte Informatik/4. Semester/ICW 1/Datensätze/BOP Datasets/:/home/appuser/gdrnpp_bop2022/datasets/BOP_DATASETS/' dodrimong:gdrnpp bash
 ```
 
 ## running commands
